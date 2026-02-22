@@ -1,41 +1,57 @@
-🛒 Zepto Clone – Inventory & Order Management System
+🛒 Zepto-Inspired Inventory & Order Management System
 
 C++ | Low-Level Design | Design Patterns
 
-A console-based simulation of a Zepto-style quick commerce platform that manages distributed dark store inventory, cart handling, intelligent order splitting, and delivery partner assignment using strong Low-Level Design principles.
+A console-based simulation of a Zepto-style grocery delivery platform, implementing dark store selection, inventory management, cart handling, and order fulfillment using strong Low-Level Design (LLD) principles and multiple Design Patterns.
+
+This system models how quick-commerce platforms manage distributed inventory across nearby dark stores and split orders intelligently.
 
 🚀 Features
 
-📍 Multiple Dark Stores with coordinates
+✅ Multiple Dark Stores with coordinates
 
-📦 Per-store inventory management
+✅ Nearby store discovery (distance-based)
 
-🔍 Nearby store discovery (within 5 KM)
+✅ Inventory management per store
 
-🛍️ Cart management
+✅ Cart system
 
-🔄 Intelligent order splitting across stores
+✅ Intelligent order splitting across stores
 
-🚚 Multiple delivery partner assignment
+✅ Multiple delivery partner assignment
 
-🏭 Factory-based product creation
+✅ Replenishment strategies
 
-🎯 Strategy-based replenishment
+✅ Factory-based product creation
 
-🔒 Singleton-based system managers
+✅ Singleton-based system managers
 
 🧠 Design Patterns Used
 1️⃣ Factory Pattern
 
-Used in ProductFactory to create product objects dynamically.
+Used in ProductFactory
+
+Product* createProduct(int sku);
+
+Creates product objects dynamically
+
+Decouples product creation logic
+
+Simulates DB-backed product generation
 
 2️⃣ Strategy Pattern
 
-Used for inventory replenishment:
+Used for Inventory Replenishment
+
+class ReplenishStrategy
+
+Concrete Strategies:
 
 ThresholdReplenishStrategy
 
 WeeklyReplenishStrategy
+
+Allows dynamic switching of replenishment logic per dark store.
 
 3️⃣ Singleton Pattern
 
@@ -45,7 +61,13 @@ DarkStoreManager
 
 OrderManager
 
-Ensures centralized management and single instance control.
+Ensures:
+
+Single global access point
+
+Centralized store and order tracking
+
+Controlled object lifecycle
 
 🏗️ System Architecture
 User
@@ -56,47 +78,46 @@ OrderManager (Singleton)
   ↓
 DarkStoreManager (Singleton)
   ↓
-Nearby DarkStores (≤ 5 KM)
+Nearby DarkStores
   ↓
 InventoryManager
   ↓
 InventoryStore (DbInventoryStore)
   ↓
-Stock Maps (SKU → Quantity)
-📦 Core Components
+Stock Maps
+📍 Core Components
 🏬 DarkStore
 
-Represents a warehouse with:
-
-Name
+Represents a warehouse/dark store with:
 
 Coordinates (x, y)
 
-InventoryManager
+Inventory
 
-Replenishment Strategy
+Replenishment strategy
 
 Supports:
 
 Distance calculation
 
-Stock checking
+Stock check
 
 Stock removal
 
-Replenishment execution
+Replenishment
 
 📦 InventoryStore (Abstraction)
+class InventoryStore
 
-Stores inventory using:
-
-map<int, int> → SKU to Quantity
-
-map<int, Product*> → SKU to Product
-
-Concrete implementation:
+Concrete Implementation:
 
 DbInventoryStore
+
+Stores:
+
+map<int,int> → SKU to Quantity
+
+map<int,Product*> → SKU to Product
 
 🛍️ Cart
 
@@ -104,62 +125,51 @@ Stores:
 
 vector<pair<Product*, int>>
 
-Supports:
+Handles:
 
-Adding items
+Add item
 
-Calculating total amount
+Calculate total
 
 📑 OrderManager
 
 Responsible for:
 
-Finding nearby dark stores
+Finding nearby dark stores (within 5 KM)
 
 Checking stock availability
 
-Single-store fulfillment
-
-Multi-store order splitting
+Splitting order across stores
 
 Assigning delivery partners
 
-Printing order summary
+Generating order summary
 
 🔄 Order Fulfillment Logic
-Step 1 – Find Nearby Stores
+Step 1: Find Nearby Stores (≤ 5 KM)
 
-Uses Euclidean distance formula:
+Stores are sorted by distance.
 
-sqrt((x - ux)*(x - ux) + (y - uy)*(y - uy))
+Step 2: Try Single Store Fulfillment
 
-Stores within 5 KM are considered.
+If closest store has all items →
+✔ One delivery partner assigned
 
-Step 2 – Single Store Fulfillment
+Step 3: Split Order Across Stores
 
-If the closest store has all required items:
+If not available in one store:
 
-Remove stock
+Iterate through nearby stores
 
-Assign one delivery partner
+Take available quantity
 
-Complete order
+Reduce stock
 
-Step 3 – Multi-Store Order Splitting
+Assign separate delivery partner per store
 
-If one store cannot fulfill the entire order:
-
-Iterate over nearby stores
-
-Allocate available quantities
-
-Assign delivery partner per store
-
-Track unfulfilled items (if any)
-
+Step 4: Compute Total & Print Summary
 📌 Example Flow
 User: Aditya (1,1)
-
 Nearby Stores:
   DarkStoreA
   DarkStoreC
@@ -171,9 +181,14 @@ Cart:
   Chocolate x2
 
 System:
-  Splits order across multiple stores
+  Splits order across stores
   Assigns multiple delivery partners
-  Generates final order summary
+  Generates order summary
+🧮 Distance Formula Used
+sqrt((x - ux)^2 + (y - uy)^2)
+
+Used to determine nearest dark stores.
+
 💻 How to Run
 Compile
 g++ zepto.cpp -o zepto
@@ -201,12 +216,28 @@ Multi-warehouse inventory allocation
 
 Replace raw pointers with smart pointers
 
-Add persistent database storage
+Add payment integration module
 
-Integrate payment module
+Add order status tracking
 
-Add delivery tracking
+Add delivery partner tracking system
 
-Introduce concurrency handling
+Introduce database persistence
+
+Add concurrency handling
 
 Add unit tests
+
+📚 Learning Outcomes
+
+This project demonstrates:
+
+Real-world quick-commerce architecture modeling
+
+Multi-store inventory distribution logic
+
+Order splitting optimization
+
+Implementation of multiple design patterns
+
+Scalable system structuring in C++
